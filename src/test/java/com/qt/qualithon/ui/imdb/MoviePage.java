@@ -1,10 +1,7 @@
 package com.qt.qualithon.ui.imdb;
-
 import com.qt.qualithon.TestSession;
 import com.qt.qualithon.ui.Page;
-
 import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.NoSuchElementException;
@@ -73,37 +70,24 @@ public class MoviePage extends Page{
      **/
     public List<String> genres(){
         List<String> genres = new ArrayList<>();
+        
         List<WebElement> credits = this.testSession.driverWait().until(
                 ExpectedConditions.presenceOfAllElementsLocatedBy(
                   By.cssSelector("li.ipc-metadata-list__item")));
-        
-        // traverse credits sections to find the section with Writers
-        for(WebElement credit:credits){
-            try{
-                if(credit.findElement(By.cssSelector("span")).getText().equalsIgnoreCase("genres")){
-                    // traverse list of genres on page to add to genres list
-                    List<WebElement> genresElements = credit.findElements(By.cssSelector("a"));
-                    for(int i =0;i< genresElements.size(); i++){
-                        genres.add(genresElements.get(i).getText());
-                    }
-                    break;
-                }
-                
-                else if(credit.findElement(By.cssSelector("a")).getText().equalsIgnoreCase("genres")){
-                    // traverse list of genres on page to add to genres list
-                    List<WebElement> genresElements2 = credit.findElements(By.cssSelector("a"));
-                    for(int i =0;i< genresElements2.size(); i++){
-                        genres.add(genresElements2.get(i).getText());
-                    }
-                    break;
-                }
-            }
-            
-            
-            catch(NoSuchElementException e){}
-        }
 
-        
+            // traverse credits sections to find the section with Writers
+            for(WebElement credit:credits){
+                try{
+                    if(credit.findElement(By.cssSelector("span")).getText().equalsIgnoreCase("Genres")){
+                        // traverse list of writers on page to add to writers list
+                        List<WebElement> genresElements = credit.findElements(By.cssSelector("a"));
+                        for(int i = 0;i<genresElements.size(); i++){
+                        	genres.add(genresElements.get(i).getText());                     
+                        }
+                        break;
+                    }
+                }catch(NoSuchElementException e){}
+            }
         // if genres list is empty throw exception
         if(genres.isEmpty()){
             throw new NoSuchElementException("Could not lookup genres on Movie page");
@@ -119,7 +103,7 @@ public class MoviePage extends Page{
     public String releaseYear(){
         return this.testSession.driverWait().until(
             ExpectedConditions.presenceOfElementLocated(
-            		By.cssSelector("div[class='sc-80d4314-1 fbQftq'] li:nth-child(1)")
+                By.cssSelector("div[class='sc-80d4314-0 fjPRnj'] li:nth-child(1)")
             ) 
         ).getText();
     }
@@ -141,20 +125,20 @@ public class MoviePage extends Page{
                 if(credit.findElement(By.cssSelector("span")).getText().equalsIgnoreCase("Writers")){
                     // traverse list of writers on page to add to writers list
                     List<WebElement> writersElements = credit.findElements(By.cssSelector("a"));
-                    for(int i =0;i< writersElements.size(); i++){
+                    for(int i = 0; i < writersElements.size() ; i++){
                         writers.add(writersElements.get(i).getText());
                     }
                     break;
                 }
-                    else if(credit.findElement(By.cssSelector("a")).getText().equalsIgnoreCase("Writers")){
-                        // traverse list of writers on page to add to writers list
-                        List<WebElement> writersElements2 = credit.findElements(By.cssSelector("a"));
-                        for(int i =1;i< writersElements2.size()-1; i++){
-                            writers.add(writersElements2.get(i).getText());
-                        }
-                    break;
-                }
-            }catch(NoSuchElementException e){}
+                else if (credit.findElement(By.cssSelector("a")).getText().equalsIgnoreCase("Writers")) {
+    					List<WebElement> writersClickableElements = credit.findElements(By.cssSelector("a"));
+    					for (int i = 1; i<writersClickableElements.size()-1; i++) {
+    						writers.add(writersClickableElements.get(i).getText());
+    					}
+    					break;
+    					}
+                	}
+                catch(NoSuchElementException e){}
         }
 
         // if writers list is empty throw exception
@@ -163,5 +147,20 @@ public class MoviePage extends Page{
         }
         return writers;
     }
+    
+    public String maturityRating() {
+		return this.testSession.driverWait().until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(
+				"div[class='sc-80d4314-2 iJtmbR'] ul> li:nth-child(2) a"))) 
+				.getText();
+
+	}
+
+	public String ratingScore() {
+		return this.testSession.driverWait()
+				.until(ExpectedConditions.presenceOfElementLocated(By.xpath("(//span[@class='sc-7ab21ed2-1 jGRxWM'])[1]")))
+				.getText();
+
+	}
 
 }
+
